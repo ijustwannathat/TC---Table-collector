@@ -20,7 +20,6 @@ class MainView(View):
 class PostDetailView(View):
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
-
         return render(
             request, "store/post_detail.html",
             context={
