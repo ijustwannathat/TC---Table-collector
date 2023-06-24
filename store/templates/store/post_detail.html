@@ -4,31 +4,49 @@
 {% block header %}
     {% include 'block/header.html' %}
 {% endblock %}
+
 {% block content %}
+<div class="container">
     <div class="row">
         <div class="col-lg-8">
-            <!-- This is column of the intro-->
+            <br>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Introduction</a></li>
+                    <li class="breadcrumb-item"><a href="{% url "index" %}">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ post.h1 }}</li>
                 </ol>
             </nav>
+            <br>
             <img class="img-fluid rounded" src="{{ post.image.url }}" alt="">
             <hr>
             <p class="lead">
-                {{ post.content|safe }}
+            {{ post.content|safe }}
             </p>
+
             <hr>
             <p class="lead text-right">Author: <a href="#">{{ post.author }}</a></p>
             <hr>
-            <div class="text-right">Published {{ post.created_at }} </div>
+            <div class="text-right">Published {{ post.created_at }}</div>
+            <br>
             <hr>
-            {% include "block/comments.html" %}
+            <p class="text-center" >Enroll in this course and learn something useful with us!</p>
+            <div class="container d-flex justify-content-center">
+                {% if post.price != 0.00 %}
+                    <button class="btn btn-success">Buy for {{ post.price }}$</button>
+                {% else %}
+                    <button class="btn btn-success">Enroll for free</button>
+                {% endif %}
+            </div>
+            <br>
+            <hr>
+            <br>
+            {% include 'block/comments.html' %}
+            <hr>
         </div>
+        {% include "block/aside.html" %}
     </div>
+</div>
 {% endblock %}
-{% block pagination %}
-    {% include "block/pagination.html" %}
-    <br>
-{% endblock %}
+
+
+
