@@ -14,7 +14,7 @@ urlpatterns = [
     path('contact/success/', FeedBackResponseView.as_view(), name='success'),
     path('search/', SearchResultsView.as_view(), name='search_results'),
     path('tag/<slug:slug>/', TagView.as_view(), name='tag'),
-
+    path('comment/<int:comment_id>/delete/', PostDetailView.delete_comment, name='del_comment')
 
 ]
 

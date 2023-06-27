@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.core.paginator import Paginator
-from .models import Post
-from .forms import SignUpForm, SignInForm, FeedBackForm
+from .models import Post, Comment
+from .forms import SignUpForm, SignInForm, FeedBackForm, CommentForm
 from django.contrib.auth import login, authenticate
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.mail import send_mail, BadHeaderError
@@ -25,11 +25,14 @@ class MainView(View):
         )
 
 
+
+
 class PostDetailView(View):
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
         common_tags = Tag.objects.annotate(num_posts=Count('post')).order_by('-id')[:5]
         last_posts = Post.objects.all().order_by('-id')[:5]
+        comment_form = CommentForm()
         return render(
             request,
             "store/post_detail.html",
@@ -37,8 +40,28 @@ class PostDetailView(View):
                 "post": post,
                 "common_tags": common_tags,
                 "last_posts": last_posts,
+                "comment_form": comment_form,
             }
         )
+    def post(self, request, slug, *args, **kwargs):
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            text = request.POST['text']
+            username = self.request.user
+            post = get_object_or_404(Post, url=slug)
+            comment = Comment.objects.create(post=post, username=username, text=text)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return render(request, 'store/post_detail.html', context={
+            'comment_form': comment_form
+        })
+
+    def delete_comment(request, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id)
+        comment.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
 
 
 
