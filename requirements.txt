@@ -1,0 +1,16 @@
+apsw==3.40.0.0
+asgiref==3.7.2
+asttokens==2.2.1
+async-generator==1.10
+async-timeout==4.0.2
+attrs==22.2.0
+autocommand==2.2.2
+Automat==22.10.0
+Django==4.2.2
+django-ckeditor==6.6.1
+django-js-asset==2.0.0
+django-taggit==4.0.0
+Pillow==9.5.0
+six==1.16.0
+sqlparse==0.4.4
+typing_extensions==4.6.3
