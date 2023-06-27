@@ -1,0 +1,22 @@
+{% extends "store/base.html" %}
+{% load static %}
+{% block title %}Thank You: Gratitude and Appreciation{% endblock %}
+{% block header %}
+    {% include 'block/header.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <nav aria-label="breadcrumb" class="mt-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Contacts</li>
+                    </ol>
+                </nav>
+                <br>
+                <p class="lead" style="display:flex; justify-content: center">Your message has been sent! Thank you.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "store/base.html" %}
 {% load static %}
-{% block title%}{{ post.title }} {% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 {% block header %}
     {% include 'block/header.html' %}
 {% endblock %}
@@ -22,14 +22,24 @@
             <p class="lead">
             {{ post.content|safe }}
             </p>
+            <div class="d-flex justify-content-end">
+                {% for tag in post.tag.all %}
+                    <a href="{% url 'tag' tag.slug %}" class="mr-1 badge badge-info">#{{ tag }}</a>
+                {% endfor %}
+            </div>
 
             <hr>
-            <p class="lead text-right">Author: <a href="#">{{ post.author }}</a></p>
+
+            <div class="mr-auto p-2 lead">Author: {{ post.author }}</div>
             <hr>
-            <div class="text-right">Published {{ post.created_at }}</div>
+            <div class="p-2">Published {{ post.created_at }}</div>
+
             <br>
             <hr>
-            <p class="text-center" >Enroll in this course and learn something useful with us!</p>
+            <p class="text-center" >Embark on an exciting educational journey and expand your knowledge with us!
+            </p>
+            <hr>
+        <br>
             <div class="container d-flex justify-content-center">
                 {% if post.price != 0.00 %}
                     <button class="btn btn-success">Buy for {{ post.price }}$</button>
@@ -37,7 +47,6 @@
                     <button class="btn btn-success">Enroll for free</button>
                 {% endif %}
             </div>
-            <br>
             <hr>
             <br>
             {% include 'block/comments.html' %}

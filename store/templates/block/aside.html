@@ -2,55 +2,33 @@
     <div class="card my-4">
         <h5 class="card-header">Tags</h5>
         <div class="card-body">
-            <div class="row">
-                <div class="col-lg-6">
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="">Django</a>
-                        </li>
-                        <li>
-                            <a href="#">Python</a>
-                        </li>
-                        <li>
-                            <a href="#">OOP</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-lg-6">
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="#">C#</a>
-                        </li>
-                        <li>
-                            <a href="#">FastAPI</a>
-                        </li>
-                        <li>
-                            <a href="#">JavaScript</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="d-flex flex-wrap">
+                {% for mt in common_tags %}
+                    <a href="{% url 'tag' mt.slug %}" class="m-2 h5">{{mt}}</a>
+                {% endfor %}
             </div>
-        </div>
-        <div class="card m-4">
-            <h5 class="card-header"> Might be interesting</h5>
-            <div class="card-body">
-                <h5 class="card-title">GIL Python</h5>
-                <p class="card-text">The Python Global Interpreter Lock or GIL, in simple words, is a mutex (or a lock) that allows only one thread to hold the control of the Python interpreter.</p>
-                <a href="https://realpython.com/python-gil/" class="card-link">Click to see more</a>
-            </div>
-            <hr>
-            <div class="card-body">
-                <h5 class="card-title">Iterators python</h5>
-                <p class="card-text">Iterators and iterables are fundamental components of Python programming, and you’ll have to deal with them in almost all your programs.</p>
-                <a href="https://realpython.com/python-iterators-iterables/#understanding-iteration-in-python" class="card-link">Click to see more</a>
-            </div>
-            <hr>
-            <div class="card-body">
-                <h5 class="card-title">Run HTTP server python</h5>
-                <p class="card-text">Python’s HTTP server can come in handy when you want to quickly share a bunch of files with students in a classroom or anyone else who’s connected to the same network as you.</p>
-                <a href="https://realpython.com/python-http-server/" class="card-link">Click to see more</a>
-            </div>
-            <hr>
         </div>
     </div>
+    <div class="card my-4">
+
+        <h5 class="card-header">Most Popular</h5>
+        {% for lp in last_posts %}
+            <div class="card-body">
+                <h5 class="card-title">{{ lp.h1 }}</h5>
+                <img src="{{ lp.image.url }}" alt="" class="card-img-top">
+                {{ lp.description|safe|truncatechars:100 }}
+                <div>
+                    {% if lp.price != 0.00 %}
+                        <a href="{% url 'post_detail' lp.url %}" class="btn btn-sm btn-outline-secondary">Enroll for {{ lp.price }}$</a>
+                    {% else %}
+                        <a href="{% url 'post_detail' lp.url %}" class="btn btn-sm btn-outline-secondary">Free</a>
+                    {% endif %}
+                </div>
+                <hr>
+            </div>
+
+        {% endfor %}
+
+    </div>
 </div>
+
