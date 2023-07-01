@@ -3,7 +3,7 @@ from django.views import View
 from django.core.paginator import Paginator
 from .models import Post, Comment
 from .forms import SignUpForm, SignInForm, FeedBackForm, CommentForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, get_user_model
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.mail import send_mail, BadHeaderError
 from django.db.models import Q, Count
@@ -23,8 +23,6 @@ class MainView(View):
                 'page_obj': page_obj,
             }
         )
-
-
 
 
 class PostDetailView(View):
@@ -54,16 +52,6 @@ class PostDetailView(View):
         return render(request, 'store/post_detail.html', context={
             'comment_form': comment_form
         })
-
-    def delete_comment(request, comment_id):
-        comment = get_object_or_404(Comment, pk=comment_id)
-        comment.delete()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-
-
-
-
 
 
 class SignUpView(View):
@@ -206,4 +194,9 @@ class TagView(View):
         )
 
 
-
+def delete_comment(request, comment_id):
+    username = request.user
+    comment = get_object_or_404(Comment, pk=comment_id)
+    if comment.username == username:
+        comment.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
