@@ -29,12 +29,15 @@
             <h5 class="mt-0">{{ comment.username|title }}</h5>
             <p>{{ comment.text }}</p>
             <div>
-
                 {% if user.is_authenticated and user == comment.username %}
-                    <h1 href="{% url 'del_comment' comment.id %}" class="text-right"><button type="button" class="btn btn-danger">Delete</button></h1>
+                    <a href="{%url 'del_comment' comment.id %}" class="float-right">
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </a>
                 {% endif %}
             <br>
-                <p class="text-right"><strong>{{ comment.created_date }}</strong></p>
+
+            <br>
+                <p class="text-right"><small>{{ comment.created_date }}</small></p>
             </div>
         </div>
     </div>

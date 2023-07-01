@@ -1,8 +1,13 @@
 from django.urls import path
-from .views import MainView, PostDetailView, SignUpView, SignInView,FeedBackView, FeedBackResponseView
-from .views import SearchResultsView, TagView
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
+from .views import (
+    MainView, PostDetailView,
+    SignUpView, SignInView,
+    FeedBackView, FeedBackResponseView,
+    SearchResultsView, TagView, delete_comment)
+
+
 
 urlpatterns = [
     path('', MainView.as_view(), name='index'),
@@ -14,7 +19,7 @@ urlpatterns = [
     path('contact/success/', FeedBackResponseView.as_view(), name='success'),
     path('search/', SearchResultsView.as_view(), name='search_results'),
     path('tag/<slug:slug>/', TagView.as_view(), name='tag'),
-    path('comment/<int:comment_id>/delete/', PostDetailView.delete_comment, name='del_comment')
+    path('comment/<int:comment_id>/delete/', delete_comment, name='del_comment')
 
 ]
 
