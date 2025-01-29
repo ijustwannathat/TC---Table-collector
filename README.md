@@ -1,9 +1,12 @@
 
 # Courses Website
 
-A simple website to manage and display courses.
+My first and simple website to manage and display courses.
 
 ## Features
+- Login Features
+- API integration
+- Profiles
 - View available courses
 - Search courses
 - Course details page
