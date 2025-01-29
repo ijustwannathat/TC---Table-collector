@@ -1,35 +1,36 @@
-from django.shortcuts import render, get_object_or_404
-from django.views import View
+from django.contrib.auth import authenticate, get_user_model, login
+from django.core.mail import BadHeaderError, send_mail
 from django.core.paginator import Paginator
-from .models import Post, Comment
-from .forms import SignUpForm, SignInForm, FeedBackForm, CommentForm
-from django.contrib.auth import login, authenticate, get_user_model
-from django.http import HttpResponseRedirect, HttpResponse
-from django.core.mail import send_mail, BadHeaderError
-from django.db.models import Q, Count
+from django.db.models import Count, Q
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.views import View
 from taggit.models import Tag
+
+from .forms import CommentForm, FeedBackForm, SignInForm, SignUpForm
+from .models import Comment, Post
 
 
 class MainView(View):
     def get(self, request, *args, **kwargs):
         posts = Post.objects.all()
         paginator = Paginator(posts, 9)
-        page_number = request.GET.get('page')
+        page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return render(
             request,
-            'store/home.html',
+            "store/home.html",
             context={
-                'page_obj': page_obj,
-            }
+                "page_obj": page_obj,
+            },
         )
 
 
 class PostDetailView(View):
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
-        common_tags = Tag.objects.annotate(num_posts=Count('post')).order_by('-id')[:5]
-        last_posts = Post.objects.all().order_by('-id')[:5]
+        common_tags = Tag.objects.annotate(num_posts=Count("post")).order_by("-id")[:5]
+        last_posts = Post.objects.all().order_by("-id")[:5]
         comment_form = CommentForm()
         return render(
             request,
@@ -39,19 +40,20 @@ class PostDetailView(View):
                 "common_tags": common_tags,
                 "last_posts": last_posts,
                 "comment_form": comment_form,
-            }
+            },
         )
+
     def post(self, request, slug, *args, **kwargs):
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
-            text = request.POST['text']
+            text = request.POST["text"]
             username = self.request.user
             post = get_object_or_404(Post, url=slug)
             comment = Comment.objects.create(post=post, username=username, text=text)
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        return render(request, 'store/post_detail.html', context={
-            'comment_form': comment_form
-        })
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+        return render(
+            request, "store/post_detail.html", context={"comment_form": comment_form}
+        )
 
 
 class SignUpView(View):
@@ -62,7 +64,7 @@ class SignUpView(View):
             "store/signup.html",
             context={
                 "form": form,
-            }
+            },
         )
 
     def post(self, request, *args, **kwargs):
@@ -77,7 +79,7 @@ class SignUpView(View):
             "store/signup.html",
             context={
                 "form": form,
-            }
+            },
         )
 
 
@@ -89,7 +91,7 @@ class SignInView(View):
             "store/signin.html",
             context={
                 "form": form,
-            }
+            },
         )
 
     def post(self, request, *args, **kwargs):
@@ -101,25 +103,19 @@ class SignInView(View):
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect("/")
-        return render(
-            request,
-            "store/signin.html",
-            context={
-                "form": form
-            }
-        )
+        return render(request, "store/signin.html", context={"form": form})
 
 
 class FeedBackView(View):
     def get(self, request, *args, **kwargs):
-        form =  FeedBackForm()
+        form = FeedBackForm()
         return render(
             request,
             "store/contact.html",
             context={
                 "form": form,
                 "title": "Write to me",
-            }
+            },
         )
 
     def post(self, request, *args, **kwargs):
@@ -130,7 +126,12 @@ class FeedBackView(View):
             subject = form.cleaned_data["subject"]
             message = form.cleaned_data["message"]
             try:
-                send_mail(f'From{name} | {subject}', message, from_email, ["kokfbc13@gmail.com"])
+                send_mail(
+                    f"From{name} | {subject}",
+                    message,
+                    from_email,
+                    ["kokfbc13@gmail.com"],
+                )
             except BadHeaderError:
                 return HttpResponse("Invalid title")
             return HttpResponseRedirect("success")
@@ -140,7 +141,7 @@ class FeedBackView(View):
             "store/contact.html",
             context={
                 "form": form,
-            }
+            },
         )
 
 
@@ -151,30 +152,25 @@ class FeedBackResponseView(View):
             "store/appreciation.html",
             context={
                 "title": "Appreciating Feedback: A Key to Growth and Success!",
-            }
-
+            },
         )
 
 
 class SearchResultsView(View):
     def get(self, request, *args, **kwargs):
-        query = self.request.GET.get('q')
+        query = self.request.GET.get("q")
         results = ""
         if query:
             results = Post.objects.filter(
                 Q(h1__icontains=query) | Q(content__icontains=query)
             )
         paginator = Paginator(results, 9)
-        page_number = request.GET.get('page')
+        page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return render(
             request,
             "store/search.html",
-            context={
-                "title": "Search",
-                "results": page_obj,
-                "count": results.count
-            }
+            context={"title": "Search", "results": page_obj, "count": results.count},
         )
 
 
@@ -190,7 +186,7 @@ class TagView(View):
                 "title": f"Results by tag: {tag}",
                 "posts": posts,
                 "common_tags": common_tags,
-            }
+            },
         )
 
 
@@ -199,4 +195,5 @@ def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     if comment.username == username:
         comment.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+
